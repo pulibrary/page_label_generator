@@ -1,0 +1,18 @@
+{
+  "name": "page-name-gen",
+  "version": "1.0.0",
+  "description": "Page name generator study",
+  "scripts": {
+    "prepublish": "babel src --out-dir lib",
+    "test": "jasmine"
+  },
+  "main": "lib/labelGen.js",
+  "author": "jstroop@princeton.edu",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "~6.1.18",
+    "babel-core": "~6.1.21",
+    "babel-preset-es2015": "~6.1.18",
+    "jasmine": "~2.3.2"
+  }
+}
