@@ -1,20 +1,23 @@
 require("babel-core").transform("code");
 
-let fibonacci = {
-  [Symbol.iterator]() {
-    let pre = 0, cur = 1;
-    return {
-      next() {
-        [pre, cur] = [cur, pre + cur];
-        return { done: false, value: cur }
-      }
+module.exports = {
+
+  frontBackLabeler: function* (frontLabel=null, backLabel=null, startWith="front") {
+    let labels = [ frontLabel, backLabel ];
+    if (startWith == "back") {
+      labels.reverse();
     }
+    var labeler = cycle(labels)
+    while (true)
+      yield labeler.next().value;
   }
+
 }
 
-for (var n of fibonacci) {
-  // truncate the sequence at 1000
-  if (n > 1000)
-    break;
-  console.log(n);
+function* cycle(arr) {
+  while (true) {
+    let nxt = arr.shift();
+    arr.push(nxt);
+    yield nxt;
+  }
 }

@@ -4,7 +4,7 @@
   "description": "Page name generator study",
   "scripts": {
     "prepublish": "babel src --out-dir lib",
-    "test": "jasmine"
+    "test": "babel-node spec/run.js"
   },
   "main": "lib/labelGen.js",
   "author": "jstroop@princeton.edu",
@@ -13,7 +13,8 @@
     "babel-cli": "~6.1.18",
     "babel-core": "~6.1.21",
     "babel-preset-es2015": "~6.1.18",
-    "jasmine": "~2.3.2"
+    "babel-polyfill": "~6.1.19",
+    "jasmine-es6": "~0.0.18"
   },
   "babel": {
     "presets" : [ "es2015" ]
