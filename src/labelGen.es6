@@ -12,23 +12,31 @@ module.exports = {
    */
   pageNumberGenerator: function*(start=1, method="paginate", startWith="front") {
     let roman = false,
-        counter = start;
+        counter = start,
+        changeFolio = false;
+
     if (!isInt(start)) {
       roman = true
       counter = this.deromanize(start) // TODO: need an error if deromanize fails
     }
+
+    if (startWith == "back") changeFolio = !changeFolio
+
     while(true) {
-      if (method == "paginate") {
-        if (roman)
-          yield this.romanize(counter);
-        else
-          yield counter;
+      if (roman)
+        yield this.romanize(counter);
+      else
+        yield counter;
+
+      if (method == "foliate") {
+        if (changeFolio) counter++;
+        changeFolio = !changeFolio
+      }
+      else {
         counter++
       }
 
     }
-
-
   },
 
   /**

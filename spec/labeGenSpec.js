@@ -67,6 +67,74 @@ describe("pageNumberGenerator", function() {
     expect(gen.next().value).toEqual('xliv');
     expect(gen.next().value).toEqual('xlv');
   });
+
+  it("will foliate", function() {
+    var gen = lg.pageNumberGenerator(1, "foliate");
+    expect(gen.next().value).toEqual(1);
+    expect(gen.next().value).toEqual(1);
+    expect(gen.next().value).toEqual(2);
+    expect(gen.next().value).toEqual(2);
+  });
+
+  it("will foliate starting with the back", function() {
+    var gen = lg.pageNumberGenerator(1, "foliate", "back");
+    expect(gen.next().value).toEqual(1);
+    expect(gen.next().value).toEqual(2);
+    expect(gen.next().value).toEqual(2);
+    expect(gen.next().value).toEqual(3);
+    expect(gen.next().value).toEqual(3);
+  });
+
+  it("will foliate with roman numerals", function() {
+    var gen = lg.pageNumberGenerator('i', "foliate");
+    expect(gen.next().value).toEqual('i');
+    expect(gen.next().value).toEqual('i');
+    expect(gen.next().value).toEqual('ii');
+    expect(gen.next().value).toEqual('ii');
+  });
+
+  it("will foliate with roman numerals starting with the back", function() {
+    var gen = lg.pageNumberGenerator('i', "foliate", "back");
+    expect(gen.next().value).toEqual('i');
+    expect(gen.next().value).toEqual('ii');
+    expect(gen.next().value).toEqual('ii');
+    expect(gen.next().value).toEqual('iii');
+    expect(gen.next().value).toEqual('iii');
+  });
+
+ it("will foliate starting with any number", function() {
+   var gen = lg.pageNumberGenerator(42, "foliate");
+   expect(gen.next().value).toEqual(42);
+   expect(gen.next().value).toEqual(42);
+   expect(gen.next().value).toEqual(43);
+   expect(gen.next().value).toEqual(43);
+ });
+
+ it("will foliate starting with any number starting with the back", function() {
+   var gen = lg.pageNumberGenerator(42, "foliate", "back");
+   expect(gen.next().value).toEqual(42);
+   expect(gen.next().value).toEqual(43);
+   expect(gen.next().value).toEqual(43);
+   expect(gen.next().value).toEqual(44);
+   expect(gen.next().value).toEqual(44);
+ });
+
+ it("will foliate starting with any roman numeral", function() {
+   var gen = lg.pageNumberGenerator('xlii', "foliate");
+   expect(gen.next().value).toEqual('xlii');
+   expect(gen.next().value).toEqual('xlii');
+   expect(gen.next().value).toEqual('xliii');
+   expect(gen.next().value).toEqual('xliii');
+ });
+
+ it("will foliate starting with any roman numeral starting with the back", function() {
+   var gen = lg.pageNumberGenerator('xlii', "foliate", "back");
+   expect(gen.next().value).toEqual('xlii');
+   expect(gen.next().value).toEqual('xliii');
+   expect(gen.next().value).toEqual('xliii');
+   expect(gen.next().value).toEqual('xliv');
+   expect(gen.next().value).toEqual('xliv');
+ });
 });
 
 describe("romanize", function() {
