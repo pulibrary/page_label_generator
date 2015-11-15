@@ -1,4 +1,3 @@
-require("babel-core").transform("code");
 
 module.exports = {
 
