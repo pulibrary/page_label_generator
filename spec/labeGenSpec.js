@@ -25,4 +25,14 @@ describe("frontBackLabeler", function() {
     expect(labeler.next().value).toEqual(backLabel);
   });
 
+  it("is OK with null as a label", function() {
+    var frontLabel = null,
+        backLabel = "v",
+        labeler = lg.frontBackLabeler(null, backLabel);
+
+    expect(labeler.next().value).toEqual(frontLabel);
+    expect(labeler.next().value).toEqual(backLabel);
+    expect(labeler.next().value).toEqual(frontLabel);
+  });
+
 });
