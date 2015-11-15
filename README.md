@@ -1,5 +1,19 @@
+# Page Label Generator
+
+Study to implement https://github.com/pulibrary/plum/issues/7
+
+## Requires
+
+Node >=4.2.2
+
 ## Install
-sudo npm install
+
+```
+$ npm install
+```
 
 ## Test
-npm test
+
+```
+$ npm test
+```
