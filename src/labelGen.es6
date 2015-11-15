@@ -10,7 +10,24 @@ module.exports = {
    * @param {string} [startWith=front] - If set to "back" and method=foliate,
    *   the first value only yielded once.
    */
-  pageNumberEnumerator: function*(start=1, method="paginate", startWith="front") {
+  pageNumberGenerator: function*(start=1, method="paginate", startWith="front") {
+    let roman = false,
+        counter = start;
+    if (!isInt(start)) {
+      roman = true
+      counter = this.deromanize(start) // TODO: need an error if deromanize fails
+    }
+    while(true) {
+      if (method == "paginate") {
+        if (roman)
+          yield this.romanize(counter);
+        else
+          yield counter;
+        counter++
+      }
+
+    }
+
 
   },
 
@@ -30,11 +47,15 @@ module.exports = {
   },
 
 
-  // Roman numeral helpers lifted from
-  // http://blog.stevenlevithan.com/archives/javascript-roman-numeral-converter
+
+  /**
+   * Roman numeral helpers lifted from
+   * http://blog.stevenlevithan.com/archives/javascript-roman-numeral-converter
+   * with only slight modifications
+   */
   romanize: function(num) {
   	if (!+num)
-  		return NaN;
+  		return false;
   	var	digits = String(+num).split(""),
   		key = ["","c","cc","ccc","cd","d","dc","dcc","dccc","cm",
   		       "","x","xx","xxx","xl","l","lx","lxx","lxxx","xc",
@@ -46,6 +67,11 @@ module.exports = {
   	return Array(+digits.join("") + 1).join("m") + roman;
   },
 
+  /**
+   * Roman numeral helpers lifted from
+   * http://blog.stevenlevithan.com/archives/javascript-roman-numeral-converter
+   * with only slight modifications
+   */
   deromanize: function(str) {
   	var	str = str.toLowerCase(),
   		validator = /^m*(?:d?c{0,3}|c[md])(?:l?x{0,3}|x[cl])(?:v?i{0,3}|i[xv])$/,
@@ -58,7 +84,6 @@ module.exports = {
   		num += key[m[0]];
   	return num;
   }
-
 }
 
 /**
@@ -72,4 +97,8 @@ function* cycle(arr) {
     arr.push(nxt);
     yield nxt;
   }
+}
+
+function isInt(n){
+  return Number(n) === n && n % 1 === 0;
 }
