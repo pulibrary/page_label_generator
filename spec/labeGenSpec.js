@@ -15,4 +15,14 @@ describe("frontBackLabeler", function() {
     expect(labeler.next().value).toEqual(frontLabel);
   });
 
+  it("can start with the back", function() {
+    var frontLabel = "r",
+        backLabel = "v",
+        labeler = lg.frontBackLabeler(frontLabel, backLabel, "back");
+
+    expect(labeler.next().value).toEqual(backLabel);
+    expect(labeler.next().value).toEqual(frontLabel);
+    expect(labeler.next().value).toEqual(backLabel);
+  });
+
 });

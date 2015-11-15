@@ -4,10 +4,9 @@ module.exports = {
 
   frontBackLabeler: function* (frontLabel=null, backLabel=null, startWith="front") {
     let labels = [ frontLabel, backLabel ];
-    if (startWith == "back") {
+    if (startWith == "back")
       labels.reverse();
-    }
-    var labeler = cycle(labels)
+    let labeler = cycle(labels);
     while (true)
       yield labeler.next().value;
   }
