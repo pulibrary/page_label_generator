@@ -12,8 +12,20 @@ Node >=4.2.2
 $ npm install
 ```
 
+You might also want to install babel-cli globally:
+
+```
+$ npm install --global babel-cli
+```
+
 ## Test
 
 ```
 $ npm test
+```
+
+## Transpile to es5
+
+```
+babel src --out-dir lib
 ```
