@@ -10,9 +10,9 @@ module.exports = {
    * @param {string} [startWith=front] - If set to "back" and method=foliate,
    *   the first value only yielded once.
    */
-  // pageNumberEnumerator: function*(start=1, method="paginate", startWith="front") {
-  //
-  // },
+  pageNumberEnumerator: function*(start=1, method="paginate", startWith="front") {
+
+  },
 
   /**
    * Generator for front and back of leaf labels.
@@ -24,23 +24,11 @@ module.exports = {
     let labels = [ frontLabel, backLabel ];
     if (startWith == "back")
       labels.reverse();
-    let labeler = this.cycle(labels);
+    let labeler = cycle(labels);
     while (true)
       yield labeler.next().value;
   },
 
-  /**
-   * Generator to endlessly iterate through the members of an array, starting over
-   * at the beginning when members run out.
-   * @param {*[]} arr - An array of anything.
-   */
-  cycle: function*(arr) {
-    while (true) {
-      let nxt = arr.shift();
-      arr.push(nxt);
-      yield nxt;
-    }
-  },
 
   // Roman numeral helpers lifted from
   // http://blog.stevenlevithan.com/archives/javascript-roman-numeral-converter
@@ -71,4 +59,17 @@ module.exports = {
   	return num;
   }
 
+}
+
+/**
+ * Generator to endlessly iterate through the members of an array, starting over
+ * at the beginning when members run out.
+ * @param {*[]} arr - An array of anything.
+ */
+function* cycle(arr) {
+  while (true) {
+    let nxt = arr.shift();
+    arr.push(nxt);
+    yield nxt;
+  }
 }

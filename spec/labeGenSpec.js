@@ -36,3 +36,23 @@ describe("frontBackLabeler", function() {
   });
 
 });
+
+describe("romanize", function() {
+
+  it("works", function() {
+    expect(lg.romanize(1)).toEqual('i');
+    expect(lg.romanize(42)).toEqual('xlii');
+    expect(lg.romanize(100)).toEqual('c');
+  });
+
+});
+
+describe("deromanize", function() {
+
+  it("works", function() {
+    expect(lg.deromanize('i')).toEqual(1);
+    expect(lg.deromanize('xlii')).toEqual(42);
+    expect(lg.deromanize('c')).toEqual(100);
+  });
+
+});
