@@ -3,6 +3,117 @@ install();
 
 var lg = require('../src/labelGen.es6')
 
+
+describe("frontBackLabeler", function() {
+
+  it("just counts up from 1 by default", function() {
+    // var start = 1,
+    //     method = "paginate",
+    //     frontLabel = "r",
+    //     backLabel = "v",
+    //     startWith = "front"
+    //     unitLabel = "p.",
+    //     bracket = false;
+    //
+    // var gen = pageLabelGenerator(start, method, frontLabel, backLabel,
+    //   startWith, unitLabel, bracket)
+
+    var gen = lg.pageLabelGenerator();
+
+    expect(gen.next().value).toEqual("1");
+    expect(gen.next().value).toEqual("2");
+    expect(gen.next().value).toEqual("3");
+  });
+
+  it("brackets", function() {
+    var start = 1,
+        method = "paginate",
+        frontLabel = "",
+        backLabel = "",
+        startWith = "",
+        unitLabel = "",
+        bracket = true;
+
+    var gen = lg.pageLabelGenerator(start, method, frontLabel, backLabel,
+      startWith, unitLabel, bracket)
+
+    expect(gen.next().value).toEqual("[1]");
+    expect(gen.next().value).toEqual("[2]");
+    expect(gen.next().value).toEqual("[3]");
+  });
+
+  it("takes a unitLabel", function() {
+    var start = 1,
+        method = "paginate",
+        frontLabel = "",
+        backLabel = "",
+        startWith = "",
+        unitLabel = "p. ",
+        bracket = false;
+
+    var gen = lg.pageLabelGenerator(start, method, frontLabel, backLabel,
+      startWith, unitLabel, bracket)
+
+    expect(gen.next().value).toEqual("p. 1");
+    expect(gen.next().value).toEqual("p. 2");
+    expect(gen.next().value).toEqual("p. 3");
+  });
+
+  it("foliates with the correct front and back labels", function() {
+    var start = 1,
+        method = "foliate",
+        frontLabel = "r",
+        backLabel = "v",
+        startWith = "front",
+        unitLabel = "",
+        bracket = false;
+
+    var gen = lg.pageLabelGenerator(start, method, frontLabel, backLabel,
+      startWith, unitLabel, bracket)
+
+    expect(gen.next().value).toEqual("1r");
+    expect(gen.next().value).toEqual("1v");
+    expect(gen.next().value).toEqual("2r");
+    expect(gen.next().value).toEqual("2v");
+  });
+
+  it("foliates starting with the back with the correct front and back labels", function() {
+    var start = 1,
+        method = "foliate",
+        frontLabel = "r",
+        backLabel = "v",
+        startWith = "back",
+        unitLabel = "",
+        bracket = false;
+
+    var gen = lg.pageLabelGenerator(start, method, frontLabel, backLabel,
+      startWith, unitLabel, bracket)
+
+    expect(gen.next().value).toEqual("1v");
+    expect(gen.next().value).toEqual("2r");
+    expect(gen.next().value).toEqual("2v");
+    expect(gen.next().value).toEqual("3r");
+    expect(gen.next().value).toEqual("3v");
+  });
+
+  it("respects changes to everything", function() {
+    var start = 'vi',
+        method = "foliate",
+        frontLabel = " (recto)",
+        backLabel = " (verso)",
+        startWith = "back",
+        unitLabel = "f. ",
+        bracket = true;
+
+    var gen = lg.pageLabelGenerator(start, method, frontLabel, backLabel,
+      startWith, unitLabel, bracket)
+
+    expect(gen.next().value).toEqual("[f. vi (verso)]");
+    expect(gen.next().value).toEqual("[f. vii (recto)]");
+    expect(gen.next().value).toEqual("[f. vii (verso)]");
+  });
+});
+
 describe("frontBackLabeler", function() {
 
   it("alternates between the given values", function() {
@@ -139,7 +250,7 @@ describe("pageNumberGenerator", function() {
 
 describe("romanize", function() {
 
-  it("works", function() {
+  it("seems to work", function() {
     expect(lg.romanize(1)).toEqual('i');
     expect(lg.romanize(42)).toEqual('xlii');
     expect(lg.romanize(100)).toEqual('c');
@@ -149,7 +260,7 @@ describe("romanize", function() {
 
 describe("deromanize", function() {
 
-  it("works", function() {
+  it("seems to work", function() {
     expect(lg.deromanize('i')).toEqual(1);
     expect(lg.deromanize('xlii')).toEqual(42);
     expect(lg.deromanize('c')).toEqual(100);
