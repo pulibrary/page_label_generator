@@ -30,7 +30,7 @@ $ npm test
 babel src --out-dir lib
 ```
 
-## Example n the babel-node shell
+## Example in the babel-node shell
 
 ```
 $ babel src --out-dir lib
