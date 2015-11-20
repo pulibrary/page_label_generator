@@ -7,16 +7,6 @@ var lg = require('../src/labelGen.es6')
 describe("frontBackLabeler", function() {
 
   it("just counts up from 1 by default", function() {
-    // var start = 1,
-    //     method = "paginate",
-    //     frontLabel = "r",
-    //     backLabel = "v",
-    //     startWith = "front"
-    //     unitLabel = "p.",
-    //     bracket = false;
-    //
-    // var gen = pageLabelGenerator(start, method, frontLabel, backLabel,
-    //   startWith, unitLabel, bracket)
 
     var gen = lg.pageLabelGenerator();
 
@@ -245,6 +235,13 @@ describe("pageNumberGenerator", function() {
    expect(gen.next().value).toEqual('xliii');
    expect(gen.next().value).toEqual('xliv');
    expect(gen.next().value).toEqual('xliv');
+ });
+
+ it("respects case for roman numerals", function() {
+   var gen = lg.pageNumberGenerator('V');
+   expect(gen.next().value).toEqual('V');
+   expect(gen.next().value).toEqual('VI');
+   expect(gen.next().value).toEqual('VII');
  });
 });
 

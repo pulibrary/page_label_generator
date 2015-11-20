@@ -36,18 +36,25 @@ module.exports = {
    */
   pageNumberGenerator: function*(start=1, method="paginate", startWith="front") {
     let roman = false,
+        capital = false,
         counter = start,
         changeFolio = false;
 
     if (!isInt(start)) {
       roman = true
+      capital = start == start.toUpperCase()
+      start.toLowerCase()
       counter = this.deromanize(start) // TODO: need an error if deromanize fails
     }
 
     if (startWith == "back") changeFolio = !changeFolio
 
     while(true) {
-      if (roman) yield this.romanize(counter);
+      if (roman) {
+        let val = this.romanize(counter);
+        if (capital) val = val.toUpperCase()
+        yield val;
+      }
       else yield counter;
 
       if (method == "foliate") {
