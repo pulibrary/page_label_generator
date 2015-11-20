@@ -79,8 +79,6 @@ module.exports = {
       yield labeler.next().value;
   },
 
-  // TODO: allow both upper and lower case roman numerals.
-
   /**
    * Roman numeral helpers lifted from
    * http://blog.stevenlevithan.com/archives/javascript-roman-numeral-converter
