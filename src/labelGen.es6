@@ -1,5 +1,9 @@
+'use strict';
 
-module.exports = {
+const name = 'page-label-generator',
+  version = '0.0.1';
+
+const labelGen = {
 
   /**
    * Generator for page labels.
@@ -14,6 +18,10 @@ module.exports = {
    * @param {boolean} [brackete=false] - If true aAdd brackets ('[]') around the
    *   label.
    */
+
+  name,
+  version,
+/*
   pageLabelGenerator: function*(start=1, method="paginate", frontLabel="",
     backLabel="", startWith="front", unitLabel="", bracket=false) {
     let numberer = this.pageNumberGenerator(start, method, startWith),
@@ -25,6 +33,25 @@ module.exports = {
       yield `${bracketOpen}${unitLabel}${num}${side}${bracketClose}`.trim()
     }
   },
+*/
+  pageLabelGenerator: function*(opts = {
+    'start': 1,
+    'method': 'paginate',
+    'frontLabel': '',
+    'backLabel': '',
+    'startWith':'front',
+    'unitLabel':'',
+    'bracket': false
+  }) {
+    let numberer = this.pageNumberGenerator(opts),
+        frontBackLabeler = this.frontBackLabeler(opts),
+        [bracketOpen, bracketClose] = opts.bracket ? ['[',']'] : ['',''];
+    while (true) {
+      let num = numberer.next().value,
+          side = frontBackLabeler.next().value;
+      yield `${bracketOpen}${opts.unitLabel}${num}${side}${bracketClose}`.trim()
+    }
+  },
 
   /**
    * Generator for page numbers.
@@ -34,20 +61,24 @@ module.exports = {
    * @param {string} [startWith=front] - If set to "back" and method=foliate,
    *   the first value only yielded once.
    */
-  pageNumberGenerator: function*(start=1, method="paginate", startWith="front") {
+  pageNumberGenerator: function*(opts={
+    start: 1,
+    method: "paginate",
+    startWith: "front"
+  }) {
     let roman = false,
         capital = false,
-        counter = start,
+        counter = opts.start,
         changeFolio = false;
 
-    if (!isInt(start)) {
+    if (!isInt(opts.start)) {
       roman = true
-      capital = start == start.toUpperCase()
-      start.toLowerCase()
-      counter = this.deromanize(start) // TODO: need an error if deromanize fails
+      capital = opts.start == opts.start.toUpperCase()
+      opts.start.toLowerCase()
+      counter = this.deromanize(opts.start) // TODO: need an error if deromanize fails
     }
 
-    if (startWith == "back") changeFolio = !changeFolio
+    if (opts.startWith == "back") changeFolio = !changeFolio
 
     while(true) {
       if (roman) {
@@ -57,7 +88,7 @@ module.exports = {
       }
       else yield counter;
 
-      if (method == "foliate") {
+      if (opts.method == "foliate") {
         if (changeFolio) counter++;
         changeFolio = !changeFolio
       }
@@ -71,9 +102,13 @@ module.exports = {
    * @param {string} [backLabel=""] - The label for the back of a leaf.
    * @param {string} [startWith=front] - If set to "back", backLabel is yielded first.
    */
-  frontBackLabeler: function*(frontLabel="", backLabel="", startWith="front") {
-    let labels = [ frontLabel, backLabel ];
-    if (startWith == "back") labels.reverse();
+  frontBackLabeler: function*(opts={
+    frontLabel: "",
+    backLabel: "",
+    startWith: "front"
+  }) {
+    let labels = [ opts.frontLabel, opts.backLabel ];
+    if (opts.startWith == "back") labels.reverse();
     let labeler = cycle(labels);
     while (true)
       yield labeler.next().value;
@@ -133,3 +168,5 @@ function* cycle(arr) {
 function isInt(n){
   return Number(n) === n && n % 1 === 0;
 }
+
+export default labelGen;

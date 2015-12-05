@@ -4,7 +4,11 @@ Study to implement https://github.com/pulibrary/plum/issues/7
 
 ## Requires
 
-Node >= 4.2.2
+If you want to run this code in the browser as part of your app, you will need webpack
+and you will need to add the babel polyfill at the top of your entry script like so:
+```
+import babelPolyfill from 'babel-polyfill'
+```
 
 ## Install
 
@@ -12,34 +16,29 @@ Node >= 4.2.2
 $ npm install
 ```
 
-You might also want to install babel-cli globally:
-
-```
-$ npm install --global babel-cli
-```
-
-## Test
+## Test and Lint
 
 ```
 $ npm test
+$ npm run lint
 ```
 
-## Transpile to es5
+## Compile (Transpile to es5)
 
 ```
-babel src --out-dir lib
+npm run compile
 ```
 
 ## Example in the babel-node shell
 
 ```
-$ babel src --out-dir lib
+$ npm run compile
 $ babel-node
 ```
 
 ```node
 
-> let mod = require("./lib/labelGen");
+> let mod = require("./src/labelGen");
 
 > let gen = mod.pageLabelGenerator();
 > gen.next().value;

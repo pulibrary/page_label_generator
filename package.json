@@ -1,26 +1,37 @@
 {
-  "name": "page-name-gen",
+  "name": "page-label-generator",
   "version": "0.0.1",
   "description": "Page name generator study",
+  "main": "dist/labelGen.js",
   "scripts": {
-    "prepublish": "babel src --out-dir lib",
-    "test": "babel-node spec/run.js"
+    "dev": "babel-node src/labelGen.es6",
+    "lint": "eslint src/**/*.es6",
+    "compile": "babel --stage 0 -d dist/ src/",
+    "prepublish": "npm run compile",
+    "test": "babel-node node_modules/argg src/test/*.es6"
   },
-  "main": "lib/labelGen.js",
-  "author": "jstroop@princeton.edu",
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/jpstroop/page_label_generator"
   },
+  "keywords": [
+    "module",
+    "npm",
+    "starter",
+    "boilerplate",
+    "babel",
+    "es6",
+    "tape"
+  ],
+  "author": "jstroop@princeton.edu",
+  "license": "MIT",
   "devDependencies": {
-    "babel-cli": "~6.1.18",
-    "babel-preset-es2015": "~6.1.18",
-    "jasmine-es6": "~0.0.18",
-    "jasmine": "~2.14.4"
+    "babel-polyfill": "^6",
+    "argg": "0.0.2",
+    "babel": "^5",
+    "babel-eslint": "^4.1.0",
+    "eslint": "^1.2.1",
+    "tape": "^4.2.0"
   },
-  "private": true,
-  "babel": {
-    "presets": ["es2015"]
-  }
+  "dependencies": {}
 }
