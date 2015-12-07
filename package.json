@@ -1,7 +1,7 @@
 {
   "name": "page-label-generator",
-  "version": "0.0.1",
-  "description": "Page name generator study",
+  "version": "1.0.0",
+  "description": "Page Label Generator",
   "main": "dist/labelGen.js",
   "scripts": {
     "dev": "babel-node src/labelGen.es6",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jpstroop/page_label_generator"
+    "url": "https://github.com/sdellis/page_label_generator"
   },
   "keywords": [
     "module",

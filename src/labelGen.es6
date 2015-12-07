@@ -1,7 +1,7 @@
 'use strict';
 
 const name = 'page-label-generator',
-  version = '0.0.1';
+  version = '1.0.0';
 
 const labelGen = {
 
