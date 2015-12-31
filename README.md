@@ -1,12 +1,14 @@
 # Page Label Generator
 
+[![Build Status](https://travis-ci.org/sdellis/page_label_generator.svg?branch=master)](https://travis-ci.org/sdellis/page_label_generator)
+
 The Page Label Generator is a module that automatically generates page labels
 for "book-like" objects in a variety of ways. See the example usage section below
 to see the variety of page labeling options such as roman numberals, back-to-front,
 foliation, and starting numbers.
 
 The Page Label Generator was originally written by [Jon Stroop](https://github.com/jpstroop/page_label_generator)
-for [Plum](https://github.com/pulibrary/plum). This project cleans up some code, adds tape as a testing framework, and publishes it 
+for [Plum](https://github.com/pulibrary/plum). This project cleans up some code, adds tape as a testing framework, and publishes it
 as a npm module for easy inclusion into browser-based apps.
 
 ## Requires
