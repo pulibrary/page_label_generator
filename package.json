@@ -1,6 +1,6 @@
 {
   "name": "page-label-generator",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Page Label Generator",
   "main": "dist/labelGen.js",
   "scripts": {
