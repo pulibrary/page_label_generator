@@ -23,19 +23,7 @@ const labelGen = {
    * @param {string} [twoUpDir="ltr"] - ltr or rtl. If twoUp and "rtl", the
    *   the larger value with be on the left of the separator
    */
-/*
-  pageLabelGenerator: function*(start=1, method="paginate", frontLabel="",
-    backLabel="", startWith="front", unitLabel="", bracket=false) {
-    let numberer = this.pageNumberGenerator(start, method, startWith),
-        frontBackLabeler = this.frontBackLabeler(frontLabel, backLabel, startWith),
-        [bracketOpen, bracketClose] = bracket ? ['[',']'] : ['',''];
-    while (true) {
-      let num = numberer.next().value,
-          side = frontBackLabeler.next().value;
-      yield `${bracketOpen}${unitLabel}${num}${side}${bracketClose}`.trim()
-    }
-  },
-*/
+
   pageLabelGenerator: function*(opts = {
     'start': 1,
     'method': 'paginate',
@@ -45,8 +33,8 @@ const labelGen = {
     'unitLabel':'',
     'bracket': false,
     'twoUp ': false,
-    'twoUpSeparator' : "/",
-    'twoUpDir' : "ltr"
+    'twoUpSeparator': '/',
+    'twoUpDir': 'ltr'
   }) {
     let numberer = this.pageNumberGenerator(opts),
         frontBackLabeler = this.frontBackLabeler(opts),
@@ -69,15 +57,6 @@ const labelGen = {
       }
     }
   },
-  //   let numberer = this.pageNumberGenerator(opts),
-  //       frontBackLabeler = this.frontBackLabeler(opts),
-  //       [bracketOpen, bracketClose] = opts.bracket ? ['[',']'] : ['',''];
-  //   while (true) {
-  //     let num = numberer.next().value,
-  //         side = frontBackLabeler.next().value;
-  //     yield `${bracketOpen}${opts.unitLabel}${num}${side}${bracketClose}`.trim()
-  //   }
-  // },
 
   /**
    * Generator for page numbers.

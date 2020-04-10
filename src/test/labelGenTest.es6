@@ -104,80 +104,79 @@ test('labelGen respects changes to everything', function (assert) {
   assert.end();
 });
 
+test('labelGen does 2-ups', function (assert) {
+  var opts = {
+      'start': 1,
+      'method': 'paginate',
+      'frontLabel': '',
+      'backLabel': '',
+      'startWith': 'front',
+      'unitLabel': '',
+      'bracket': false,
+      'twoUp': true,
+      'twoUpSeparator': '/'
+  };
 
+  var gen = lg.pageLabelGenerator(opts)
 
+  assert.plan(3);
 
+  assert.equal(gen.next().value, '1/2', 'should equal 1/2');
+  assert.equal(gen.next().value, '3/4', 'should equal 3/4');
+  assert.equal(gen.next().value, '5/6', 'should equal 5/6');
 
-// it("does 2-up", function() {
-//   var start = 1,
-//       method = "paginate",
-//       frontLabel = "",
-//       backLabel = "",
-//       startWith = "front",
-//       unitLabel = "",
-//       bracket = false,
-//       twoUp = true;
-//
-//   var gen = lg.pageLabelGenerator(start, method, frontLabel, backLabel,
-//     startWith, unitLabel, bracket, twoUp)
-//
-//   expect(gen.next().value).toEqual("1/2");
-//   expect(gen.next().value).toEqual("3/4");
-//   expect(gen.next().value).toEqual("5/6");
-// });
-//
-// it("does 2-up rtl", function() {
-//   var start = 1,
-//       method = "paginate",
-//       frontLabel = "",
-//       backLabel = "",
-//       startWith = "front",
-//       unitLabel = "p. ",
-//       bracket = false,
-//       twoUp = true,
-//       twoUpSeparator = "/",
-//       twoUpDir = "rtl";
-//
-//
-//   var gen = lg.pageLabelGenerator(start, method, frontLabel, backLabel,
-//     startWith, unitLabel, bracket, twoUp, twoUpSeparator, twoUpDir)
-//
-//   expect(gen.next().value).toEqual("p. 2/1");
-//   expect(gen.next().value).toEqual("p. 4/3");
-//   expect(gen.next().value).toEqual("p. 6/5");
-// });
-//
-// it("does maddeningly complicated combinations", function() {
-//   var start = 1,
-//       method = "foliate",
-//       frontLabel = "a",
-//       backLabel = "b",
-//       startWith = "back",
-//       unitLabel = "f. ",
-//       bracket = true,
-//       twoUp = true,
-//       twoUpSeparator = "/",
-//       twoUpDir = "rtl";
-//
-//
-//   var gen = lg.pageLabelGenerator(start, method, frontLabel, backLabel,
-//     startWith, unitLabel, bracket, twoUp, twoUpSeparator, twoUpDir)
-//
-//   expect(gen.next().value).toEqual("[f. 2a/1b]");
-//   expect(gen.next().value).toEqual("[f. 3a/2b]");
-//   expect(gen.next().value).toEqual("[f. 4a/3b]");
-// });
+  assert.end();
+});
 
+test('labelGen does rtl 2-ups', function (assert) {
+  var opts = {
+      'start': 1,
+      'method': 'paginate',
+      'frontLabel': '',
+      'backLabel': '',
+      'startWith': 'front',
+      'unitLabel': 'pp. ',
+      'bracket': false,
+      'twoUp': true,
+      'twoUpSeparator': '-',
+      'twoUpDir': 'rtl'
+  };
 
+  var gen = lg.pageLabelGenerator(opts)
 
+  assert.plan(3);
 
+  assert.equal(gen.next().value, 'pp. 2-1', 'should equal 2-1');
+  assert.equal(gen.next().value, 'pp. 4-3', 'should equal 4-3');
+  assert.equal(gen.next().value, 'pp. 6-5', 'should equal 6-5');
 
+  assert.end();
+});
 
+test('labelGen does maddeningly complicated combinations', function (assert) {
+  var opts = {
+      'start': 1,
+      'method': 'foliate',
+      'frontLabel': 'a',
+      'backLabel': 'b',
+      'startWith': 'back',
+      'unitLabel': 'f. ',
+      'bracket': true,
+      'twoUp': true,
+      'twoUpSeparator': '/',
+      'twoUpDir': 'rtl'
+  };
 
+  var gen = lg.pageLabelGenerator(opts)
 
+  assert.plan(3);
 
+  assert.equal(gen.next().value, '[f. 2a/1b]', 'should equal [f. 2a/1b]');
+  assert.equal(gen.next().value, '[f. 3a/2b]', 'should equal [f. 3a/2b]');
+  assert.equal(gen.next().value, '[f. 4a/3b]', 'should equal [f. 4a/3b]');
 
-
+  assert.end();
+});
 
 test('frontBackLabeler alternates between the given values', function (assert) {
   var opts = {

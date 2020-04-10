@@ -26,11 +26,11 @@
   "author": "jstroop@princeton.edu",
   "license": "MIT",
   "devDependencies": {
-    "babel-polyfill": "^6",
     "argg": "0.0.2",
     "babel": "^5",
-    "babel-eslint": "^4.1.0",
-    "eslint": "^1.2.1",
+    "babel-eslint": "^10.1.0",
+    "babel-polyfill": "^6",
+    "eslint": "^6.8.0",
     "tape": "^4.2.0"
   },
   "dependencies": {}
