@@ -17,10 +17,12 @@ const labelGen = {
    * @param {string} [unitLabel=""] - A label for the unit, like "p. " or "f. ".
    * @param {boolean} [brackete=false] - If true aAdd brackets ('[]') around the
    *   label.
+   * @param {boolean} [twoUp=false] - If true, yield two values as a time
+   * @param {string} [twoUpSeparator="/"] - If twoUp, separate the values
+   *   with this string.
+   * @param {string} [twoUpDir="ltr"] - ltr or rtl. If twoUp and "rtl", the
+   *   the larger value with be on the left of the separator
    */
-
-  name,
-  version,
 /*
   pageLabelGenerator: function*(start=1, method="paginate", frontLabel="",
     backLabel="", startWith="front", unitLabel="", bracket=false) {
@@ -41,17 +43,41 @@ const labelGen = {
     'backLabel': '',
     'startWith':'front',
     'unitLabel':'',
-    'bracket': false
+    'bracket': false,
+    'twoUp ': false,
+    'twoUpSeparator' : "/",
+    'twoUpDir' : "ltr"
   }) {
     let numberer = this.pageNumberGenerator(opts),
         frontBackLabeler = this.frontBackLabeler(opts),
         [bracketOpen, bracketClose] = opts.bracket ? ['[',']'] : ['',''];
     while (true) {
-      let num = numberer.next().value,
-          side = frontBackLabeler.next().value;
-      yield `${bracketOpen}${opts.unitLabel}${num}${side}${bracketClose}`.trim()
+      let openLabel = `${bracketOpen}${opts.unitLabel}`,
+          num1 = numberer.next().value,
+          side1 = frontBackLabeler.next().value;
+      if (!opts.twoUp) {
+          yield `${openLabel}${num1}${side1}${bracketClose}`
+      } else {
+        let num2 = numberer.next().value,
+            side2 = frontBackLabeler.next().value,
+            sep = opts.twoUpSeparator;
+        if (opts.twoUpDir=="rtl") {
+            yield `${openLabel}${num2}${side2}${sep}${num1}${side1}${bracketClose}`;
+        } else {
+            yield `${openLabel}${num1}${side1}${sep}${num2}${side2}${bracketClose}`;
+        }
+      }
     }
   },
+  //   let numberer = this.pageNumberGenerator(opts),
+  //       frontBackLabeler = this.frontBackLabeler(opts),
+  //       [bracketOpen, bracketClose] = opts.bracket ? ['[',']'] : ['',''];
+  //   while (true) {
+  //     let num = numberer.next().value,
+  //         side = frontBackLabeler.next().value;
+  //     yield `${bracketOpen}${opts.unitLabel}${num}${side}${bracketClose}`.trim()
+  //   }
+  // },
 
   /**
    * Generator for page numbers.

@@ -104,6 +104,81 @@ test('labelGen respects changes to everything', function (assert) {
   assert.end();
 });
 
+
+
+
+
+// it("does 2-up", function() {
+//   var start = 1,
+//       method = "paginate",
+//       frontLabel = "",
+//       backLabel = "",
+//       startWith = "front",
+//       unitLabel = "",
+//       bracket = false,
+//       twoUp = true;
+//
+//   var gen = lg.pageLabelGenerator(start, method, frontLabel, backLabel,
+//     startWith, unitLabel, bracket, twoUp)
+//
+//   expect(gen.next().value).toEqual("1/2");
+//   expect(gen.next().value).toEqual("3/4");
+//   expect(gen.next().value).toEqual("5/6");
+// });
+//
+// it("does 2-up rtl", function() {
+//   var start = 1,
+//       method = "paginate",
+//       frontLabel = "",
+//       backLabel = "",
+//       startWith = "front",
+//       unitLabel = "p. ",
+//       bracket = false,
+//       twoUp = true,
+//       twoUpSeparator = "/",
+//       twoUpDir = "rtl";
+//
+//
+//   var gen = lg.pageLabelGenerator(start, method, frontLabel, backLabel,
+//     startWith, unitLabel, bracket, twoUp, twoUpSeparator, twoUpDir)
+//
+//   expect(gen.next().value).toEqual("p. 2/1");
+//   expect(gen.next().value).toEqual("p. 4/3");
+//   expect(gen.next().value).toEqual("p. 6/5");
+// });
+//
+// it("does maddeningly complicated combinations", function() {
+//   var start = 1,
+//       method = "foliate",
+//       frontLabel = "a",
+//       backLabel = "b",
+//       startWith = "back",
+//       unitLabel = "f. ",
+//       bracket = true,
+//       twoUp = true,
+//       twoUpSeparator = "/",
+//       twoUpDir = "rtl";
+//
+//
+//   var gen = lg.pageLabelGenerator(start, method, frontLabel, backLabel,
+//     startWith, unitLabel, bracket, twoUp, twoUpSeparator, twoUpDir)
+//
+//   expect(gen.next().value).toEqual("[f. 2a/1b]");
+//   expect(gen.next().value).toEqual("[f. 3a/2b]");
+//   expect(gen.next().value).toEqual("[f. 4a/3b]");
+// });
+
+
+
+
+
+
+
+
+
+
+
+
 test('frontBackLabeler alternates between the given values', function (assert) {
   var opts = {
       'frontLabel': ' (recto)',
