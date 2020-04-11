@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "babel-node src/labelGen.es6",
     "lint": "eslint src/**/*.es6",
-    "compile": "babel --stage 0 -d dist/ src/",
+    "compile": "babel -d dist/ src/",
     "prepublish": "npm run compile",
     "test": "babel-node node_modules/argg src/test/*.es6"
   },
@@ -26,18 +26,19 @@
   "author": "jstroop@princeton.edu",
   "license": "MIT",
   "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/node": "^7.8.7",
+    "@babel/polyfill": "^7.8.7",
+    "@babel/preset-env": "^7.9.5",
     "argg": "0.0.2",
-    "babel-cli": "^6.26.0",
     "babel-eslint": "^10.1.0",
-    "babel-polyfill": "^6",
-    "babel-preset-env": "^1.7.0",
-    "babel": "^5",
     "eslint": "^6.8.0",
-    "tape": "^4.2.0"
+    "tape": "^4.13.2"
   },
   "babel": {
     "presets": [
-      "env"
+      "@babel/preset-env"
     ]
   },
   "dependencies": {}
