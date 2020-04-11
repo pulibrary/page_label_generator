@@ -27,11 +27,16 @@
   "license": "MIT",
   "devDependencies": {
     "argg": "0.0.2",
-    "babel": "^5",
     "babel-eslint": "^10.1.0",
     "babel-polyfill": "^6",
+    "babel": "^5",
     "eslint": "^6.8.0",
     "tape": "^4.2.0"
+  },
+  "babel": {
+    "presets": [
+      "env"
+    ]
   },
   "dependencies": {}
 }

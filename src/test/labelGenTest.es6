@@ -4,9 +4,10 @@ import test from 'tape';
 import lg from '../labelGen.es6';
 
 test('labelGen just counts up from 1 by default', function (assert) {
-  assert.plan(3);
 
   var gen = lg.pageLabelGenerator();
+
+  assert.plan(3);
 
   assert.equal(gen.next().value, '1', 'should generate 1');
   assert.equal(gen.next().value, '2', 'should generate 2');
@@ -16,15 +17,11 @@ test('labelGen just counts up from 1 by default', function (assert) {
 });
 
 test('labelGen brackets', function (assert) {
+
   var opts = {
-      'start': 1,
-      'method': 'paginate',
-      'frontLabel': '',
-      'backLabel': '',
-      'startWith': 'front',
-      'unitLabel': '',
-      'bracket': true
-      };
+    unitLabel: '',
+    bracket: true
+  };
 
   var gen = lg.pageLabelGenerator(opts)
 
@@ -38,17 +35,9 @@ test('labelGen brackets', function (assert) {
 });
 
 test('labelGen takes a unit label', function (assert) {
-  var opts = {
-      'start': 1,
-      'method': 'paginate',
-      'frontLabel': '',
-      'backLabel': '',
-      'startWith': 'front',
-      'unitLabel': 'p. ',
-      'bracket': false
-      };
 
-  var gen = lg.pageLabelGenerator(opts)
+  var opts = { unitLabel: 'p. '},
+      gen = lg.pageLabelGenerator(opts)
 
   assert.plan(3);
 
@@ -60,15 +49,12 @@ test('labelGen takes a unit label', function (assert) {
 });
 
 test('labelGen foliates with the correct front and back labels', function (assert) {
+
   var opts = {
-      'start': 1,
-      'method': 'foliate',
-      'frontLabel': 'r',
-      'backLabel': 'v',
-      'startWith': 'front',
-      'unitLabel': '',
-      'bracket': false
-      };
+    method: 'foliate',
+    frontLabel: 'r',
+    backLabel: 'v',
+  };
 
   var gen = lg.pageLabelGenerator(opts)
 
@@ -83,15 +69,16 @@ test('labelGen foliates with the correct front and back labels', function (asser
 });
 
 test('labelGen respects changes to everything', function (assert) {
+
   var opts = {
-      'start': 'vi',
-      'method': 'foliate',
-      'frontLabel': ' (recto)',
-      'backLabel': ' (verso)',
-      'startWith': 'back',
-      'unitLabel': 'f. ',
-      'bracket': true
-      };
+    start: 'vi',
+    method: 'foliate',
+    frontLabel: ' (recto)',
+    backLabel: ' (verso)',
+    startWith: 'back',
+    unitLabel: 'f. ',
+    bracket: true
+  };
 
   var gen = lg.pageLabelGenerator(opts)
 
@@ -105,18 +92,8 @@ test('labelGen respects changes to everything', function (assert) {
 });
 
 test('labelGen does 2-ups', function (assert) {
-  var opts = {
-      'start': 1,
-      'method': 'paginate',
-      'frontLabel': '',
-      'backLabel': '',
-      'startWith': 'front',
-      'unitLabel': '',
-      'bracket': false,
-      'twoUp': true,
-      'twoUpSeparator': '/'
-  };
 
+  var opts = { twoUp: true };
   var gen = lg.pageLabelGenerator(opts)
 
   assert.plan(3);
@@ -129,17 +106,12 @@ test('labelGen does 2-ups', function (assert) {
 });
 
 test('labelGen does rtl 2-ups', function (assert) {
+
   var opts = {
-      'start': 1,
-      'method': 'paginate',
-      'frontLabel': '',
-      'backLabel': '',
-      'startWith': 'front',
-      'unitLabel': 'pp. ',
-      'bracket': false,
-      'twoUp': true,
-      'twoUpSeparator': '-',
-      'twoUpDir': 'rtl'
+    unitLabel: 'pp. ',
+    twoUp: true,
+    twoUpSeparator: '-',
+    twoUpDir: 'rtl'
   };
 
   var gen = lg.pageLabelGenerator(opts)
@@ -154,17 +126,16 @@ test('labelGen does rtl 2-ups', function (assert) {
 });
 
 test('labelGen does maddeningly complicated combinations', function (assert) {
+
   var opts = {
-      'start': 1,
-      'method': 'foliate',
-      'frontLabel': 'a',
-      'backLabel': 'b',
-      'startWith': 'back',
-      'unitLabel': 'f. ',
-      'bracket': true,
-      'twoUp': true,
-      'twoUpSeparator': '/',
-      'twoUpDir': 'rtl'
+    method: 'foliate',
+    frontLabel: 'a',
+    backLabel: 'b',
+    startWith: 'back',
+    unitLabel: 'f. ',
+    bracket: true,
+    twoUp: true,
+    twoUpDir: 'rtl'
   };
 
   var gen = lg.pageLabelGenerator(opts)
@@ -179,39 +150,40 @@ test('labelGen does maddeningly complicated combinations', function (assert) {
 });
 
 test('frontBackLabeler alternates between the given values', function (assert) {
+
   var opts = {
-      'frontLabel': ' (recto)',
-      'backLabel': ' (verso)',
-      'startWith': 'back'
-      },
-      labeler = lg.frontBackLabeler(opts);
+    frontLabel: ' (recto)',
+    backLabel: ' (verso)',
+    startWith: 'back'
+  }
 
-      assert.plan(3);
+  var labeler = lg.frontBackLabeler(opts);
 
-      assert.equal(labeler.next().value, opts.backLabel, 'should equal the back label');
-      assert.equal(labeler.next().value, opts.frontLabel, 'should equal the front label');
-      assert.equal(labeler.next().value, opts.backLabel, 'should equal the back label');
+  assert.plan(3);
 
-      assert.end();
+  assert.equal(labeler.next().value, opts.backLabel, 'should equal the back label');
+  assert.equal(labeler.next().value, opts.frontLabel, 'should equal the front label');
+  assert.equal(labeler.next().value, opts.backLabel, 'should equal the back label');
+
+  assert.end();
 });
 
-test('frontBackLabeler is OK with null as a label', function (assert) {
-  var opts = {
-      'frontLabel': null,
-      'backLabel': 'v'
-      },
-      labeler = lg.frontBackLabeler(opts);
+test('frontBackLabeler is OK with only a backLabel', function (assert) {
 
-      assert.plan(3);
+  var opts = { 'backLabel': 'v' },
+  labeler = lg.frontBackLabeler(opts);
 
-      assert.equal(labeler.next().value, opts.frontLabel, 'should equal the front label');
-      assert.equal(labeler.next().value, opts.backLabel, 'should equal the back label');
-      assert.equal(labeler.next().value, opts.frontLabel, 'should equal the front label');
+  assert.plan(3);
 
-      assert.end();
+  assert.equal(labeler.next().value, '', 'should equal the front label');
+  assert.equal(labeler.next().value, opts.backLabel, 'should equal the back label');
+  assert.equal(labeler.next().value, '', 'should equal the front label');
+
+  assert.end();
 });
 
 test('pageNumberGenerator paginates with integers starting from 1 by default', function (assert) {
+
   var gen = lg.pageNumberGenerator();
 
   assert.plan(3);
@@ -224,6 +196,7 @@ test('pageNumberGenerator paginates with integers starting from 1 by default', f
 });
 
 test('pageNumberGenerator can paginate starting with other integers', function (assert) {
+
   var gen = lg.pageNumberGenerator({ start: 5 });
 
   assert.plan(3);
@@ -236,6 +209,7 @@ test('pageNumberGenerator can paginate starting with other integers', function (
 });
 
 test('pageNumberGenerator will paginate with roman numerals', function (assert) {
+
   var gen = lg.pageNumberGenerator({ start: 'i' });
 
   assert.plan(3);
@@ -248,6 +222,7 @@ test('pageNumberGenerator will paginate with roman numerals', function (assert) 
 });
 
 test('pageNumberGenerator will paginate with roman numerals starting from other than "i"', function (assert) {
+
   var gen = lg.pageNumberGenerator({ start: 'xlii' });
 
   assert.plan(4);
@@ -261,6 +236,7 @@ test('pageNumberGenerator will paginate with roman numerals starting from other 
 });
 
 test('pageNumberGenerator will foliate', function (assert) {
+
   var gen = lg.pageNumberGenerator({ start: 1, method: 'foliate' });
 
   assert.plan(4);
@@ -274,7 +250,9 @@ test('pageNumberGenerator will foliate', function (assert) {
 });
 
 test('pageNumberGenerator will foliate starting with the back', function (assert) {
-  var gen = lg.pageNumberGenerator({ start: 1, method: 'foliate', startWith: 'back'});
+
+  var opts = { start: 1, method: 'foliate', startWith: 'back'},
+      gen = lg.pageNumberGenerator(opts);
 
   assert.plan(5);
 
@@ -288,7 +266,9 @@ test('pageNumberGenerator will foliate starting with the back', function (assert
 });
 
 test('pageNumberGenerator will foliate with roman numerals', function (assert) {
-  var gen = lg.pageNumberGenerator({ start: 'i', method: 'foliate' });
+
+  var opts = { start: 'i', method: 'foliate' },
+      gen = lg.pageNumberGenerator(opts);
 
   assert.plan(4);
 
@@ -301,7 +281,9 @@ test('pageNumberGenerator will foliate with roman numerals', function (assert) {
 });
 
 test('pageNumberGenerator will foliate starting with the back', function (assert) {
-  var gen = lg.pageNumberGenerator({ start: 'i', method: 'foliate', startWith: 'back'});
+
+  var opts = { start: 'i', method: 'foliate', startWith: 'back'},
+      gen = lg.pageNumberGenerator(opts);
 
   assert.plan(5);
 
@@ -315,7 +297,9 @@ test('pageNumberGenerator will foliate starting with the back', function (assert
 });
 
 test('pageNumberGenerator will foliate starting with any number', function (assert) {
-  var gen = lg.pageNumberGenerator({ start: 42, method: 'foliate' });
+
+  var opts = { start: 42, method: 'foliate' },
+      gen = lg.pageNumberGenerator(opts);
 
   assert.plan(4);
 
@@ -328,7 +312,9 @@ test('pageNumberGenerator will foliate starting with any number', function (asse
 });
 
 test('pageNumberGenerator will foliate starting with any number starting with the back', function (assert) {
-  var gen = lg.pageNumberGenerator({ start: 42, method: 'foliate', startWith: 'back'});
+
+  var opts = { start: 42, method: 'foliate', startWith: 'back'},
+      gen = lg.pageNumberGenerator(opts);
 
   assert.plan(5);
 
@@ -342,7 +328,9 @@ test('pageNumberGenerator will foliate starting with any number starting with th
 });
 
 test('pageNumberGenerator will foliate starting with any roman numeral', function (assert) {
-  var gen = lg.pageNumberGenerator({ start: 'xlii', method: 'foliate' });
+
+  var opts = { start: 'xlii', method: 'foliate' },
+      gen = lg.pageNumberGenerator(opts);
 
   assert.plan(4);
 
@@ -355,7 +343,9 @@ test('pageNumberGenerator will foliate starting with any roman numeral', functio
 });
 
 test('pageNumberGenerator will foliate starting with any roman numeral starting with the back', function (assert) {
-  var gen = lg.pageNumberGenerator({ start: 'xlii', method: 'foliate', startWith: 'back'});
+
+  var opts = { start: 'xlii', method: 'foliate', startWith: 'back'},
+      gen = lg.pageNumberGenerator(opts);
 
   assert.plan(5);
 
@@ -369,7 +359,9 @@ test('pageNumberGenerator will foliate starting with any roman numeral starting 
 });
 
 test('pageNumberGenerator respects case for roman numerals', function (assert) {
-  var gen = lg.pageNumberGenerator({ start: 'V' });
+
+  var opts = { start: 'V' },
+      gen = lg.pageNumberGenerator(opts);
 
   assert.plan(3);
 

@@ -24,32 +24,32 @@ const labelGen = {
    *   the larger value with be on the left of the separator
    */
 
-  pageLabelGenerator: function*(opts = {
-    'start': 1,
-    'method': 'paginate',
-    'frontLabel': '',
-    'backLabel': '',
-    'startWith':'front',
-    'unitLabel':'',
-    'bracket': false,
-    'twoUp ': false,
-    'twoUpSeparator': '/',
-    'twoUpDir': 'ltr'
-  }) {
-    let numberer = this.pageNumberGenerator(opts),
-        frontBackLabeler = this.frontBackLabeler(opts),
-        [bracketOpen, bracketClose] = opts.bracket ? ['[',']'] : ['',''];
+  pageLabelGenerator: function*({
+    start = 1,
+    method = 'paginate',
+    frontLabel = '',
+    backLabel = '',
+    startWith ='front',
+    unitLabel ='',
+    bracket = false,
+    twoUp  = false,
+    twoUpSeparator = '/',
+    twoUpDir = 'ltr'
+  } = {}) {
+    let numberer = this.pageNumberGenerator(arguments[0]),
+        frontBackLabeler = this.frontBackLabeler(arguments[0]),
+        [bracketOpen, bracketClose] = bracket ? ['[',']'] : ['',''];
     while (true) {
-      let openLabel = `${bracketOpen}${opts.unitLabel}`,
+      let openLabel = `${bracketOpen}${unitLabel}`,
           num1 = numberer.next().value,
           side1 = frontBackLabeler.next().value;
-      if (!opts.twoUp) {
+      if (!twoUp) {
           yield `${openLabel}${num1}${side1}${bracketClose}`
       } else {
         let num2 = numberer.next().value,
             side2 = frontBackLabeler.next().value,
-            sep = opts.twoUpSeparator;
-        if (opts.twoUpDir=="rtl") {
+            sep = twoUpSeparator;
+        if (twoUpDir=="rtl") {
             yield `${openLabel}${num2}${side2}${sep}${num1}${side1}${bracketClose}`;
         } else {
             yield `${openLabel}${num1}${side1}${sep}${num2}${side2}${bracketClose}`;
@@ -66,24 +66,24 @@ const labelGen = {
    * @param {string} [startWith=front] - If set to "back" and method=foliate,
    *   the first value only yielded once.
    */
-  pageNumberGenerator: function*(opts={
-    start: 1,
-    method: "paginate",
-    startWith: "front"
-  }) {
+  pageNumberGenerator: function*({
+    start = 1,
+    method = "paginate",
+    startWith = "front"
+  } = {}) {
     let roman = false,
         capital = false,
-        counter = opts.start,
+        counter = start,
         changeFolio = false;
 
-    if (!isInt(opts.start)) {
+    if (!isInt(start)) {
       roman = true
-      capital = opts.start == opts.start.toUpperCase()
-      opts.start.toLowerCase()
-      counter = this.deromanize(opts.start) // TODO: need an error if deromanize fails
+      capital = start == start.toUpperCase()
+      start.toLowerCase()
+      counter = this.deromanize(start) // TODO: need an error if deromanize fails
     }
 
-    if (opts.startWith == "back") changeFolio = !changeFolio
+    if (startWith == "back") changeFolio = !changeFolio
 
     while(true) {
       if (roman) {
@@ -93,7 +93,7 @@ const labelGen = {
       }
       else yield counter;
 
-      if (opts.method == "foliate") {
+      if (method == "foliate") {
         if (changeFolio) counter++;
         changeFolio = !changeFolio
       }
@@ -107,13 +107,13 @@ const labelGen = {
    * @param {string} [backLabel=""] - The label for the back of a leaf.
    * @param {string} [startWith=front] - If set to "back", backLabel is yielded first.
    */
-  frontBackLabeler: function*(opts={
-    frontLabel: "",
-    backLabel: "",
-    startWith: "front"
-  }) {
-    let labels = [ opts.frontLabel, opts.backLabel ];
-    if (opts.startWith == "back") labels.reverse();
+  frontBackLabeler: function*({
+    frontLabel = "",
+    backLabel = "",
+    startWith = "front"
+  } = {}) {
+    let labels = [ frontLabel, backLabel ];
+    if (startWith == "back") labels.reverse();
     let labeler = cycle(labels);
     while (true)
       yield labeler.next().value;
