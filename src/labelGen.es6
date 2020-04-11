@@ -15,7 +15,7 @@ const labelGen = {
    * @param {string} [startWith=front] - If set to "back" and method=foliate,
    *   the first value only yielded once.
    * @param {string} [unitLabel=""] - A label for the unit, like "p. " or "f. ".
-   * @param {boolean} [brackete=false] - If true aAdd brackets ('[]') around the
+   * @param {boolean} [bracket=false] - If true add brackets ('[]') around the
    *   label.
    * @param {boolean} [twoUp=false] - If true, yield two values as a time
    * @param {string} [twoUpSeparator="/"] - If twoUp, separate the values
