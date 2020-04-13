@@ -1,6 +1,6 @@
 # Page Label Generator
 
-[![Build Status](https://travis-ci.org/sdellis/page_label_generator.svg?branch=master)](https://travis-ci.org/sdellis/page_label_generator)
+[![CircleCI](https://circleci.com/gh/pulibrary/page_label_generator.svg?style=svg)](https://circleci.com/gh/pulibrary/page_label_generator)
 
 The Page Label Generator is a module that automatically generates page labels
 for "book-like" objects in a variety of ways. See the example usage section below
