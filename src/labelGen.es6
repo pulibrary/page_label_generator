@@ -1,7 +1,7 @@
 'use strict';
 
 const name = 'page-label-generator',
-  version = '1.0.3';
+      version = '1.1.0';
 
 const labelGen = {
 
@@ -15,41 +15,46 @@ const labelGen = {
    * @param {string} [startWith=front] - If set to "back" and method=foliate,
    *   the first value only yielded once.
    * @param {string} [unitLabel=""] - A label for the unit, like "p. " or "f. ".
-   * @param {boolean} [brackete=false] - If true aAdd brackets ('[]') around the
+   * @param {boolean} [bracket=false] - If true add brackets ('[]') around the
    *   label.
+   * @param {boolean} [twoUp=false] - If true, yield two values as a time
+   * @param {string} [twoUpSeparator="/"] - If twoUp, separate the values
+   *   with this string.
+   * @param {string} [twoUpDir="ltr"] - ltr or rtl. If twoUp and "rtl", the
+   *   the larger value with be on the left of the separator
    */
 
-  name,
-  version,
-/*
-  pageLabelGenerator: function*(start=1, method="paginate", frontLabel="",
-    backLabel="", startWith="front", unitLabel="", bracket=false) {
-    let numberer = this.pageNumberGenerator(start, method, startWith),
-        frontBackLabeler = this.frontBackLabeler(frontLabel, backLabel, startWith),
+  pageLabelGenerator: function*({
+    start = 1,
+    method = 'paginate',
+    frontLabel = '',
+    backLabel = '',
+    startWith ='front',
+    unitLabel ='',
+    bracket = false,
+    twoUp  = false,
+    twoUpSeparator = '/',
+    twoUpDir = 'ltr'
+  } = {}) {
+    let numberer = this.pageNumberGenerator(arguments[0]),
+        frontBackLabeler = this.frontBackLabeler(arguments[0]),
         [bracketOpen, bracketClose] = bracket ? ['[',']'] : ['',''];
     while (true) {
-      let num = numberer.next().value,
-          side = frontBackLabeler.next().value;
-      yield `${bracketOpen}${unitLabel}${num}${side}${bracketClose}`.trim()
-    }
-  },
-*/
-  pageLabelGenerator: function*(opts = {
-    'start': 1,
-    'method': 'paginate',
-    'frontLabel': '',
-    'backLabel': '',
-    'startWith':'front',
-    'unitLabel':'',
-    'bracket': false
-  }) {
-    let numberer = this.pageNumberGenerator(opts),
-        frontBackLabeler = this.frontBackLabeler(opts),
-        [bracketOpen, bracketClose] = opts.bracket ? ['[',']'] : ['',''];
-    while (true) {
-      let num = numberer.next().value,
-          side = frontBackLabeler.next().value;
-      yield `${bracketOpen}${opts.unitLabel}${num}${side}${bracketClose}`.trim()
+      let openLabel = `${bracketOpen}${unitLabel}`,
+          num1 = numberer.next().value,
+          side1 = frontBackLabeler.next().value;
+      if (!twoUp) {
+          yield `${openLabel}${num1}${side1}${bracketClose}`
+      } else {
+        let num2 = numberer.next().value,
+            side2 = frontBackLabeler.next().value,
+            sep = twoUpSeparator;
+        if (twoUpDir=='rtl') {
+            yield `${openLabel}${num2}${side2}${sep}${num1}${side1}${bracketClose}`;
+        } else {
+            yield `${openLabel}${num1}${side1}${sep}${num2}${side2}${bracketClose}`;
+        }
+      }
     }
   },
 
@@ -61,24 +66,24 @@ const labelGen = {
    * @param {string} [startWith=front] - If set to "back" and method=foliate,
    *   the first value only yielded once.
    */
-  pageNumberGenerator: function*(opts={
-    start: 1,
-    method: "paginate",
-    startWith: "front"
-  }) {
+  pageNumberGenerator: function*({
+    start = 1,
+    method = 'paginate',
+    startWith = 'front'
+  } = {}) {
     let roman = false,
         capital = false,
-        counter = opts.start,
+        counter = start,
         changeFolio = false;
 
-    if (!isInt(opts.start)) {
+    if (!isInt(start)) {
       roman = true
-      capital = opts.start == opts.start.toUpperCase()
-      opts.start.toLowerCase()
-      counter = this.deromanize(opts.start) // TODO: need an error if deromanize fails
+      capital = start == start.toUpperCase()
+      start.toLowerCase()
+      counter = this.deromanize(start) // TODO: need an error if deromanize fails
     }
 
-    if (opts.startWith == "back") changeFolio = !changeFolio
+    if (startWith == 'back') changeFolio = !changeFolio
 
     while(true) {
       if (roman) {
@@ -88,7 +93,7 @@ const labelGen = {
       }
       else yield counter;
 
-      if (opts.method == "foliate") {
+      if (method == 'foliate') {
         if (changeFolio) counter++;
         changeFolio = !changeFolio
       }
@@ -102,13 +107,13 @@ const labelGen = {
    * @param {string} [backLabel=""] - The label for the back of a leaf.
    * @param {string} [startWith=front] - If set to "back", backLabel is yielded first.
    */
-  frontBackLabeler: function*(opts={
-    frontLabel: "",
-    backLabel: "",
-    startWith: "front"
-  }) {
-    let labels = [ opts.frontLabel, opts.backLabel ];
-    if (opts.startWith == "back") labels.reverse();
+  frontBackLabeler: function*({
+    frontLabel = '',
+    backLabel = '',
+    startWith = 'front'
+  } = {}) {
+    let labels = [ frontLabel, backLabel ];
+    if (startWith == 'back') labels.reverse();
     let labeler = cycle(labels);
     while (true)
       yield labeler.next().value;
@@ -120,17 +125,17 @@ const labelGen = {
    * with only slight modifications
    */
   romanize: function(num) {
-  	if (!+num)
+    if (!+num)
       return false;
-  	var	digits = String(+num).split(""),
-  		key = ["","c","cc","ccc","cd","d","dc","dcc","dccc","cm",
-  		       "","x","xx","xxx","xl","l","lx","lxx","lxxx","xc",
-  		       "","i","ii","iii","iv","v","vi","vii","viii","ix"],
-  		roman = "",
-  		i = 3;
-  	while (i--)
-  		roman = (key[+digits.pop() + (i * 10)] || "") + roman;
-  	return Array(+digits.join("") + 1).join("m") + roman;
+    var  digits = String(+num).split(''),
+      key = ['','c','cc','ccc','cd','d','dc','dcc','dccc','cm',
+             '','x','xx','xxx','xl','l','lx','lxx','lxxx','xc',
+             '','i','ii','iii','iv','v','vi','vii','viii','ix'],
+      roman = '',
+      i = 3;
+    while (i--)
+      roman = (key[+digits.pop() + (i * 10)] || '') + roman;
+    return Array(+digits.join('') + 1).join('m') + roman;
   },
 
   /**
@@ -139,16 +144,17 @@ const labelGen = {
    * with only slight modifications
    */
   deromanize: function(str) {
-    var str = str.toLowerCase(),
-  	    validator = /^m*(?:d?c{0,3}|c[md])(?:l?x{0,3}|x[cl])(?:v?i{0,3}|i[xv])$/,
+    str = str.toLowerCase()
+    var validator = /^m*(?:d?c{0,3}|c[md])(?:l?x{0,3}|x[cl])(?:v?i{0,3}|i[xv])$/,
         token = /[mdlv]|c[md]?|x[cl]?|i[xv]?/g,
         key = {m:1000,cm:900,d:500,cd:400,c:100,xc:90,l:50,xl:40,x:10,ix:9,v:5,iv:4,i:1},
         num = 0, m;
-  	if (!(str && validator.test(str)))
-  		return false;
-  	while (m = token.exec(str))
-  		num += key[m[0]];
-  	return num;
+    if (!(str && validator.test(str)))
+      return false;
+    // eslint-disable-next-line no-cond-assign
+    while (m = token.exec(str))
+      num += key[m[0]];
+    return num;
   }
 }
 

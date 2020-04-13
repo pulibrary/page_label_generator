@@ -1,12 +1,12 @@
 {
   "name": "page-label-generator",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Page Label Generator",
   "main": "dist/labelGen.js",
   "scripts": {
     "dev": "babel-node src/labelGen.es6",
-    "lint": "eslint src/**/*.es6",
-    "compile": "babel --stage 0 -d dist/ src/",
+    "lint": "./node_modules/.bin/eslint src/labelGen.es6",
+    "compile": "babel -d dist/ src/",
     "prepublish": "npm run compile",
     "test": "babel-node node_modules/argg src/test/*.es6"
   },
@@ -26,12 +26,20 @@
   "author": "jstroop@princeton.edu",
   "license": "MIT",
   "devDependencies": {
-    "babel-polyfill": "^6",
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/node": "^7.8.7",
+    "@babel/polyfill": "^7.8.7",
+    "@babel/preset-env": "^7.9.5",
     "argg": "0.0.2",
-    "babel": "^5",
-    "babel-eslint": "^4.1.0",
-    "eslint": "^1.2.1",
-    "tape": "^4.2.0"
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.8.0",
+    "tape": "^4.13.2"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
   },
   "dependencies": {}
 }
