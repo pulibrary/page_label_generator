@@ -34,6 +34,8 @@ test('labelGen brackets', function (assert) {
   assert.end();
 });
 
+
+
 test('labelGen takes a unit label', function (assert) {
 
   var opts = { unitLabel: 'p. '},
@@ -118,9 +120,45 @@ test('labelGen does rtl 2-ups', function (assert) {
 
   assert.plan(3);
 
-  assert.equal(gen.next().value, 'pp. 2-1', 'should equal 2-1');
-  assert.equal(gen.next().value, 'pp. 4-3', 'should equal 4-3');
-  assert.equal(gen.next().value, 'pp. 6-5', 'should equal 6-5');
+  assert.equal(gen.next().value, 'pp. 2-1', 'should equal pp. 2-1');
+  assert.equal(gen.next().value, 'pp. 4-3', 'should equal pp. 4-3');
+  assert.equal(gen.next().value, 'pp. 6-5', 'should equal pp. 6-5');
+
+  assert.end();
+});
+
+test('labelGen can bracket just the value on the right', function (assert) {
+
+  var opts = {
+    twoUp: true,
+    twoUpBracketRightOnly: true
+  };
+
+  var gen = lg.pageLabelGenerator(opts)
+
+  assert.plan(3);
+
+  assert.equal(gen.next().value, '1/[2]', 'should equal 1/[2]');
+  assert.equal(gen.next().value, '3/[4]', 'should equal 3/[4]');
+  assert.equal(gen.next().value, '5/[6]', 'should equal 5/[6]');
+
+  assert.end();
+});
+
+test('labelGen can bracket just the value on the left', function (assert) {
+
+  var opts = {
+    twoUp: true,
+    twoUpBracketLeftOnly: true
+  };
+
+  var gen = lg.pageLabelGenerator(opts)
+
+  assert.plan(3);
+
+  assert.equal(gen.next().value, '[1]/2', 'should equal [1]/2');
+  assert.equal(gen.next().value, '[3]/4', 'should equal [3]/4');
+  assert.equal(gen.next().value, '[5]/6', 'should equal [5]/6');
 
   assert.end();
 });
@@ -133,18 +171,18 @@ test('labelGen does maddeningly complicated combinations', function (assert) {
     backLabel: 'b',
     startWith: 'back',
     unitLabel: 'f. ',
-    bracket: true,
     twoUp: true,
-    twoUpDir: 'rtl'
+    twoUpDir: 'rtl',
+    twoUpBracketRightOnly: true
   };
 
   var gen = lg.pageLabelGenerator(opts)
 
   assert.plan(3);
 
-  assert.equal(gen.next().value, '[f. 2a/1b]', 'should equal [f. 2a/1b]');
-  assert.equal(gen.next().value, '[f. 3a/2b]', 'should equal [f. 3a/2b]');
-  assert.equal(gen.next().value, '[f. 4a/3b]', 'should equal [f. 4a/3b]');
+  assert.equal(gen.next().value, 'f. 2a/[1b]', 'should equal f. 2a/[1b]');
+  assert.equal(gen.next().value, 'f. 3a/[2b]', 'should equal f. 3a/[2b]');
+  assert.equal(gen.next().value, 'f. 4a/[3b]', 'should equal f. 4a/[3b]');
 
   assert.end();
 });

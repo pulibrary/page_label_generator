@@ -22,6 +22,10 @@ const labelGen = {
    *   with this string.
    * @param {string} [twoUpDir="ltr"] - ltr or rtl. If twoUp and "rtl", the
    *   the larger value with be on the left of the separator
+   * @param {string} [twoUpBracketLeftOnly=false] - If twoUp and true, bracket
+   *   the value to the left of the separator only.
+   * @param {string} [twoUpBracketRightOnly=false] - If twoUp and true, bracket
+   *   the value to the right of the separator only.
    */
 
   pageLabelGenerator: function*({
@@ -34,25 +38,29 @@ const labelGen = {
     bracket = false,
     twoUp  = false,
     twoUpSeparator = '/',
-    twoUpDir = 'ltr'
+    twoUpDir = 'ltr',
+    twoUpBracketLeftOnly=false,
+    twoUpBracketRightOnly=false
   } = {}) {
     let numberer = this.pageNumberGenerator(arguments[0]),
         frontBackLabeler = this.frontBackLabeler(arguments[0]),
-        [bracketOpen, bracketClose] = bracket ? ['[',']'] : ['',''];
+        [bracketOpen, bracketClose, bracketLeftOpen, bracketLeftClose,
+          bracketRightOpen, bracketRightClose] = this.bracketLogic(arguments[0])
     while (true) {
-      let openLabel = `${bracketOpen}${unitLabel}`,
+      let open = `${bracketOpen}${bracketLeftOpen}${unitLabel}`,
+          close = `${bracketRightClose}${bracketClose}`,
           num1 = numberer.next().value,
           side1 = frontBackLabeler.next().value;
       if (!twoUp) {
-          yield `${openLabel}${num1}${side1}${bracketClose}`
+          yield `${open}${num1}${side1}${close}`
       } else {
         let num2 = numberer.next().value,
             side2 = frontBackLabeler.next().value,
-            sep = twoUpSeparator;
+            sep = `${bracketLeftClose}${twoUpSeparator}${bracketRightOpen}`;
         if (twoUpDir=='rtl') {
-            yield `${openLabel}${num2}${side2}${sep}${num1}${side1}${bracketClose}`;
+            yield `${open}${num2}${side2}${sep}${num1}${side1}${close}`;
         } else {
-            yield `${openLabel}${num1}${side1}${sep}${num2}${side2}${bracketClose}`;
+            yield `${open}${num1}${side1}${sep}${num2}${side2}${close}`;
         }
       }
     }
@@ -117,6 +125,41 @@ const labelGen = {
     let labeler = cycle(labels);
     while (true)
       yield labeler.next().value;
+  },
+
+  /**
+   * Examine options to detemine what brackets to include. Only one of
+   * `bracket`, `twoUpBracketLeftOnly`, `twoUpBracketRightOnly` can be set.
+   * This function enforces that (interfaces should enforce it as well) and
+   * returns the  appropriate strings for use in templates. If more than one
+   * option is true, all brackets return will be empty strings (`''`).
+   * @param {boolean} [bracket=false] - If true add brackets ('[]') around the
+   *   entire label.
+   * @param {string} [twoUpBracketLeftOnly=false] - If twoUp and true, bracket
+   *   the value to the left of the separator only.
+   * @param {string} [twoUpBracketRightOnly=false] - If twoUp and true, bracket
+   *   the value to the right of the separator only.
+   */
+  bracketLogic: function({
+    bracket = false,
+    twoUpBracketLeftOnly = false,
+    twoUpBracketRightOnly = false
+  } = {}) {
+    var bracketOpen = '',
+        bracketClose = '',
+        bracketLeftOpen = '',
+        bracketLeftClose = '',
+        bracketRightOpen = '',
+        bracketRightClose = ''
+    if (bracket && !(twoUpBracketLeftOnly || twoUpBracketRightOnly)) {
+      [bracketOpen, bracketClose] = ['[',']']
+    } else if (twoUpBracketLeftOnly &&  !(bracket || twoUpBracketRightOnly)) {
+      [bracketLeftOpen, bracketLeftClose] = ['[',']']
+    } else if (twoUpBracketRightOnly &&  !(bracket || twoUpBracketLeftOnly)) {
+      [bracketRightOpen, bracketRightClose] = ['[',']']
+    }
+    return [bracketOpen, bracketClose, bracketLeftOpen, bracketLeftClose,
+      bracketRightOpen, bracketRightClose]
   },
 
   /**

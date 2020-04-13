@@ -52,7 +52,7 @@ Start a shell session:
 
 ### Basic Numbering
 
-```node
+```javascript
 
 > let mod = require("./lib/labelGen").default;
 > let gen = mod.pageLabelGenerator();
@@ -77,7 +77,7 @@ Start a shell session:
 
 ### Foliation
 
-```node
+```javascript
 
 > let mod = require("./lib/labelGen").default;
 > let opts = { start: 42, method: "foliate", frontLabel: " r", backLabel: " v", unitLabel: "f. "};
@@ -107,7 +107,7 @@ Start a shell session:
 
 ### Roman Numerals
 
-```node
+```javascript
 
 > let mod = require("./lib/labelGen").default;
 > let opts = { start: 'i', unitLabel: "p. "};
@@ -139,7 +139,7 @@ Start a shell session:
 
 ### 2 Ups
 
-```node
+```javascript
 
 > let mod = require("./lib/labelGen").default;
 > let opts = { start: 42, twoUp: true}
@@ -174,6 +174,28 @@ Start a shell session:
 '[f. 45a/44b]'
 > gen.next().value
 '[f. 46a/45b]'
+
+> let opts = { twoUp: true, twoUpBracketRightOnly: true };
+> let gen = mod.pageLabelGenerator(opts);
+> gen.next().value
+'1/[2]'
+> gen.next().value
+'3/[4]'
+> gen.next().value
+'5/[6]'
+> gen.next().value
+'7/[8]'
+
+> let opts = { twoUp: true, twoUpBracketLeftOnly: true };
+> let gen = mod.pageLabelGenerator(opts);
+> gen.next().value
+'[1]/2'
+> gen.next().value
+'[3]/4'
+> gen.next().value
+'[5]/6'
+> gen.next().value
+'[7]/8'
 
 ```
 
