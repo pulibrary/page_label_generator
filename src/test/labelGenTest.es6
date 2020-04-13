@@ -3,7 +3,7 @@
 import test from 'tape';
 import lg from '../labelGen.es6';
 
-test('labelGen just counts up from 1 by default', function (assert) {
+test('pageLabelGenerator just counts up from 1 by default', function (assert) {
 
   var gen = lg.pageLabelGenerator();
 
@@ -16,7 +16,7 @@ test('labelGen just counts up from 1 by default', function (assert) {
   assert.end();
 });
 
-test('labelGen brackets', function (assert) {
+test('pageLabelGenerator brackets', function (assert) {
 
   var opts = {
     unitLabel: '',
@@ -36,7 +36,7 @@ test('labelGen brackets', function (assert) {
 
 
 
-test('labelGen takes a unit label', function (assert) {
+test('pageLabelGenerator takes a unit label', function (assert) {
 
   var opts = { unitLabel: 'p. '},
       gen = lg.pageLabelGenerator(opts)
@@ -50,7 +50,7 @@ test('labelGen takes a unit label', function (assert) {
   assert.end();
 });
 
-test('labelGen foliates with the correct front and back labels', function (assert) {
+test('pageLabelGenerator foliates with the correct front and back labels', function (assert) {
 
   var opts = {
     method: 'foliate',
@@ -70,7 +70,7 @@ test('labelGen foliates with the correct front and back labels', function (asser
   assert.end();
 });
 
-test('labelGen respects changes to everything', function (assert) {
+test('pageLabelGenerator respects changes to everything', function (assert) {
 
   var opts = {
     start: 'vi',
@@ -93,7 +93,7 @@ test('labelGen respects changes to everything', function (assert) {
   assert.end();
 });
 
-test('labelGen does 2-ups', function (assert) {
+test('pageLabelGenerator does 2-ups', function (assert) {
 
   var opts = { twoUp: true };
   var gen = lg.pageLabelGenerator(opts)
@@ -107,7 +107,7 @@ test('labelGen does 2-ups', function (assert) {
   assert.end();
 });
 
-test('labelGen does rtl 2-ups', function (assert) {
+test('pageLabelGenerator does rtl 2-ups', function (assert) {
 
   var opts = {
     unitLabel: 'pp. ',
@@ -127,7 +127,7 @@ test('labelGen does rtl 2-ups', function (assert) {
   assert.end();
 });
 
-test('labelGen can bracket just the value on the right', function (assert) {
+test('pageLabelGenerator can bracket just the value on the right', function (assert) {
 
   var opts = {
     twoUp: true,
@@ -145,7 +145,7 @@ test('labelGen can bracket just the value on the right', function (assert) {
   assert.end();
 });
 
-test('labelGen can bracket just the value on the left', function (assert) {
+test('pageLabelGenerator can bracket just the value on the left', function (assert) {
 
   var opts = {
     twoUp: true,
@@ -163,7 +163,7 @@ test('labelGen can bracket just the value on the left', function (assert) {
   assert.end();
 });
 
-test('labelGen does maddeningly complicated combinations', function (assert) {
+test('pageLabelGenerator does maddeningly complicated combinations', function (assert) {
 
   var opts = {
     method: 'foliate',
