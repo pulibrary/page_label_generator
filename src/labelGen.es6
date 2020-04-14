@@ -45,16 +45,16 @@ const labelGen = {
     let numberer = this.pageNumberGenerator(arguments[0]),
         frontBackLabeler = this.frontBackLabeler(arguments[0]),
         [bracketOpen, bracketClose, bracketLeftOpen, bracketLeftClose,
-          bracketRightOpen, bracketRightClose] = this.bracketLogic(arguments[0])
+          bracketRightOpen, bracketRightClose] = this.bracketLogic(arguments[0]),
+        open = `${bracketOpen}${bracketLeftOpen}${unitLabel}`,
+        close = `${bracketRightClose}${bracketClose}`;
     while (true) {
-      let open = `${bracketOpen}${bracketLeftOpen}${unitLabel}`,
-          close = `${bracketRightClose}${bracketClose}`,
-          num1 = numberer.next().value,
+      let num1 = numberer.next().value[0],
           side1 = frontBackLabeler.next().value;
       if (!twoUp) {
           yield `${open}${num1}${side1}${close}`
       } else {
-        let num2 = numberer.next().value,
+        let num2 = numberer.next().value[0],
             side2 = frontBackLabeler.next().value,
             sep = `${bracketLeftClose}${twoUpSeparator}${bracketRightOpen}`;
         if (twoUpDir=='rtl') {
@@ -73,6 +73,9 @@ const labelGen = {
    *   yielded twice.
    * @param {string} [startWith=front] - If set to "back" and method=foliate,
    *   the first value only yielded once.
+   * @yields {[(string, number]} - A two member array, the first item being
+   *   the value for use in the label, and the second being that value
+   *   represented as an integer.
    */
   pageNumberGenerator: function*({
     start = 1,
@@ -97,9 +100,9 @@ const labelGen = {
       if (roman) {
         let val = this.romanize(counter);
         if (capital) val = val.toUpperCase()
-        yield val;
+        yield [val, counter];
       }
-      else yield counter;
+      else yield [String(counter), counter];
 
       if (method == 'foliate') {
         if (changeFolio) counter++;
