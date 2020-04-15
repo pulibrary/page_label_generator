@@ -50,6 +50,36 @@ test('pageLabelGenerator takes a unit label', function (assert) {
   assert.end();
 });
 
+test('pageLabelGenerator can bracket evens only', function (assert) {
+
+  var opts = { unitLabel: 'p. ', bracketEvens: true },
+      gen = lg.pageLabelGenerator(opts)
+
+  assert.plan(4);
+
+  assert.equal(gen.next().value, 'p. 1', 'should equal p. 1');
+  assert.equal(gen.next().value, '[p. 2]', 'should equal [p. 2]');
+  assert.equal(gen.next().value, 'p. 3', 'should equal p. 3');
+  assert.equal(gen.next().value, '[p. 4]', 'should equal [p. 4]');
+
+  assert.end();
+});
+
+test('pageLabelGenerator can bracket odds only', function (assert) {
+
+  var opts = { unitLabel: 'p. ', bracketOdds: true },
+      gen = lg.pageLabelGenerator(opts)
+
+  assert.plan(4);
+
+  assert.equal(gen.next().value, '[p. 1]', 'should equal [p. 1]');
+  assert.equal(gen.next().value, 'p. 2', 'should equal p. 2');
+  assert.equal(gen.next().value, '[p. 3]', 'should equal [p. 3]');
+  assert.equal(gen.next().value, 'p. 4', 'should equal p. 4');
+
+  assert.end();
+});
+
 test('pageLabelGenerator foliates with the correct front and back labels', function (assert) {
 
   var opts = {

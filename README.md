@@ -54,7 +54,7 @@ Start a shell session:
 
 ```javascript
 
-> let mod = require("./lib/labelGen").default;
+> let mod = require("./src/labelGen").default;
 > let gen = mod.pageLabelGenerator();
 > gen.next().value;
 '1'
@@ -73,13 +73,16 @@ Start a shell session:
 '[p. 7]'
 > gen.next().value;
 '[p. 8]'
+
+
+
 ```
 
 ### Foliation
 
 ```javascript
 
-> let mod = require("./lib/labelGen").default;
+> let mod = require("./src/labelGen").default;
 > let opts = { start: 42, method: "foliate", frontLabel: " r", backLabel: " v", unitLabel: "f. "};
 > let gen = mod.pageLabelGenerator(opts);
 > gen.next().value;
@@ -109,7 +112,7 @@ Start a shell session:
 
 ```javascript
 
-> let mod = require("./lib/labelGen").default;
+> let mod = require("./src/labelGen").default;
 > let opts = { start: 'i', unitLabel: "p. "};
 > let gen = mod.pageLabelGenerator(opts);
 > gen.next().value;
@@ -135,13 +138,35 @@ Start a shell session:
 '[f. xliv (verso)]'
 > gen.next().value;
 '[f. xlv]'
+
+> let opts = { unitLabel: 'p. ', bracketOdds: true };
+> let gen = mod.pageLabelGenerator(opts);
+> gen.next().value
+'[p. 1]'
+> gen.next().value
+'p. 2'
+> gen.next().value
+'[p. 3]'
+> gen.next().value
+'p. 4'
+
+> let opts = { unitLabel: 'p. ', bracketEvens: true };
+> let gen = mod.pageLabelGenerator(opts);
+> gen.next().value
+'p. 1'
+> gen.next().value
+'[p. 2]'
+> gen.next().value
+'p. 3'
+> gen.next().value
+'[p. 4]'
 ```
 
 ### 2 Ups
 
 ```javascript
 
-> let mod = require("./lib/labelGen").default;
+> let mod = require("./src/labelGen").default;
 > let opts = { start: 42, twoUp: true}
 > let gen = mod.pageLabelGenerator(opts);
 > gen.next().value

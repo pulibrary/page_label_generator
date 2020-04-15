@@ -7,6 +7,22 @@ const labelGen = {
 
   /**
    * Generator for page labels.
+   *
+   * A note about bracketing: Only one of `bracket`, `twoUpBracketLeftOnly`,
+   * `twoUpBracketRightOnly` can be set, and `bracketEvens` and `bracketOdds`
+   * can only be set if none of the first three options are set. The following
+   * is an example of the difference between each option (this is also shown in
+   * greater detail in the README).
+   *
+   * `bracket` wraps the whole string in brackets: [f. 1a], [f. 1b], [f 2a], ...
+   *
+   * `bracketEvens` and `bracketOdds` wraps just the evens/odds in brackets,
+   *  and doesn't make much sense for twoUp configs: [p. 1], p. 2, [p. 3], ...
+   *
+   *  `twoUpBracketLeftOnly` and `twoUpBracketRightOnly` brackets just the
+   * value on the right or left side of the separator: f. 2a/[1b], f. 3a/[2b],
+   * f. 4a/[3b], ...
+   *
    * @param {(number|string)} [start=1] - A number or a roman numeral.
    * @param {string} [method=paginate] - If set to "foliate" each value is
    * @param {string} [frontLabel=""]  - The label for the front of a leaf.
@@ -17,6 +33,10 @@ const labelGen = {
    * @param {string} [unitLabel=""] - A label for the unit, like "p. " or "f. ".
    * @param {boolean} [bracket=false] - If true add brackets ('[]') around the
    *   label.
+   * @param {boolean} [bracketEvens=false] - If true add brackets ('[]') around
+   *   the even numbered pages.
+   * @param {boolean} [bracketOdds=false] - If true add brackets ('[]') around
+   *   the odd numbered pages.
    * @param {boolean} [twoUp=false] - If true, yield two values as a time
    * @param {string} [twoUpSeparator="/"] - If twoUp, separate the values
    *   with this string.
@@ -27,7 +47,6 @@ const labelGen = {
    * @param {string} [twoUpBracketRightOnly=false] - If twoUp and true, bracket
    *   the value to the right of the separator only.
    */
-
   pageLabelGenerator: function*({
     start = 1,
     method = 'paginate',
@@ -36,6 +55,8 @@ const labelGen = {
     startWith ='front',
     unitLabel ='',
     bracket = false,
+    bracketOdds = false,
+    bracketEvens = false,
     twoUp  = false,
     twoUpSeparator = '/',
     twoUpDir = 'ltr',
@@ -44,26 +65,43 @@ const labelGen = {
   } = {}) {
     let numberer = this.pageNumberGenerator(arguments[0]),
         frontBackLabeler = this.frontBackLabeler(arguments[0]),
+        bracketVals = this.bracketLogic(arguments[0]),
         [bracketOpen, bracketClose, bracketLeftOpen, bracketLeftClose,
-          bracketRightOpen, bracketRightClose] = this.bracketLogic(arguments[0]),
-        open = `${bracketOpen}${bracketLeftOpen}${unitLabel}`,
+          bracketRightOpen, bracketRightClose] = bracketVals,
+        evenOddBracketsAllowed = bracketVals.every(v => v == ''),
+        open = `${bracketOpen}${bracketLeftOpen}`,
         close = `${bracketRightClose}${bracketClose}`;
     while (true) {
-      let num1 = numberer.next().value[0],
-          side1 = frontBackLabeler.next().value;
+      let [num1, c] = numberer.next().value,
+          side1 = frontBackLabeler.next().value,
+          page1 = `${num1}${side1}`,
+          [eoBracketL, eoBracketR] = ['',''];
+      if (evenOddBracketsAllowed) {
+        [eoBracketL, eoBracketR] = this.evenOddBracket(c, bracketEvens, bracketOdds);
+      }
       if (!twoUp) {
-          yield `${open}${num1}${side1}${close}`
+        yield `${open}${eoBracketL}${unitLabel}${page1}${eoBracketR}${close}`
       } else {
-        let num2 = numberer.next().value[0],
+        let [num2, c] = numberer.next().value,
             side2 = frontBackLabeler.next().value,
-            sep = `${bracketLeftClose}${twoUpSeparator}${bracketRightOpen}`;
+            sep = `${bracketLeftClose}${twoUpSeparator}${bracketRightOpen}`,
+            page2 = `${num2}${side2}`;
         if (twoUpDir=='rtl') {
-            yield `${open}${num2}${side2}${sep}${num1}${side1}${close}`;
+          yield `${open}${unitLabel}${page2}${sep}${page1}${close}`;
         } else {
-            yield `${open}${num1}${side1}${sep}${num2}${side2}${close}`;
+          yield `${open}${unitLabel}${page1}${sep}${page2}${close}`;
         }
       }
     }
+  },
+
+  evenOddBracket: function(numInt, doEvens, doOdds) {
+    if ((doOdds && numInt % 2 == 1) || (doEvens && numInt % 2 == 0)) {
+      return ['[', ']']
+    } else {
+      return ['', '']
+    }
+
   },
 
   /**
