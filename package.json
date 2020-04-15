@@ -5,10 +5,10 @@
   "main": "dist/labelGen.js",
   "scripts": {
     "dev": "babel-node src/labelGen.es6",
-    "lint": "./node_modules/.bin/eslint src/labelGen.es6",
+    "lint": "./node_modules/.bin/eslint",
     "compile": "babel -d dist/ src/",
     "prepublish": "npm run compile",
-    "test": "babel-node node_modules/argg src/test/*.es6 | ./node_modules/.bin/tap-spec"
+    "test": "babel-node node_modules/argg test/*.es6 | ./node_modules/.bin/tap-spec"
   },
   "repository": {
     "type": "git",

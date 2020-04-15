@@ -1,7 +1,7 @@
 'use strict';
 
 import test from 'tape';
-import lg from '../labelGen.es6';
+import lg from '../src/labelGen.es6';
 
 test('pageLabelGenerator just counts up from 1 by default', function (assert) {
 
