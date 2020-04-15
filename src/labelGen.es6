@@ -7,6 +7,22 @@ const labelGen = {
 
   /**
    * Generator for page labels.
+   *
+   * A note about bracketing: Only one of `bracket`, `twoUpBracketLeftOnly`,
+   * `twoUpBracketRightOnly` can be set, and `bracketEvens` and `bracketOdds`
+   * can only be set if none of the first three options are set. The following
+   * is an example of the difference between each option (this is also shown in
+   * greater detail in the README).
+   *
+   * `bracket` wraps the whole string in brackets: [f. 1a], [f. 1b], [f 2a], ...
+   *
+   * `bracketEvens` and `bracketOdds` wraps just the evens/odds in brackets,
+   *  and doesn't make much sense for twoUp configs: [p. 1], p. 2, [p. 3], ...
+   *
+   *  `twoUpBracketLeftOnly` and `twoUpBracketRightOnly` brackets just the
+   * value on the right or left side of the separator: f. 2a/[1b], f. 3a/[2b],
+   * f. 4a/[3b], ...
+   *
    * @param {(number|string)} [start=1] - A number or a roman numeral.
    * @param {string} [method=paginate] - If set to "foliate" each value is
    * @param {string} [frontLabel=""]  - The label for the front of a leaf.
@@ -17,13 +33,20 @@ const labelGen = {
    * @param {string} [unitLabel=""] - A label for the unit, like "p. " or "f. ".
    * @param {boolean} [bracket=false] - If true add brackets ('[]') around the
    *   label.
+   * @param {boolean} [bracketEvens=false] - If true add brackets ('[]') around
+   *   the even numbered pages.
+   * @param {boolean} [bracketOdds=false] - If true add brackets ('[]') around
+   *   the odd numbered pages.
    * @param {boolean} [twoUp=false] - If true, yield two values as a time
    * @param {string} [twoUpSeparator="/"] - If twoUp, separate the values
    *   with this string.
    * @param {string} [twoUpDir="ltr"] - ltr or rtl. If twoUp and "rtl", the
    *   the larger value with be on the left of the separator
+   * @param {string} [twoUpBracketLeftOnly=false] - If twoUp and true, bracket
+   *   the value to the left of the separator only.
+   * @param {string} [twoUpBracketRightOnly=false] - If twoUp and true, bracket
+   *   the value to the right of the separator only.
    */
-
   pageLabelGenerator: function*({
     start = 1,
     method = 'paginate',
@@ -32,30 +55,53 @@ const labelGen = {
     startWith ='front',
     unitLabel ='',
     bracket = false,
+    bracketOdds = false,
+    bracketEvens = false,
     twoUp  = false,
     twoUpSeparator = '/',
-    twoUpDir = 'ltr'
+    twoUpDir = 'ltr',
+    twoUpBracketLeftOnly=false,
+    twoUpBracketRightOnly=false
   } = {}) {
     let numberer = this.pageNumberGenerator(arguments[0]),
         frontBackLabeler = this.frontBackLabeler(arguments[0]),
-        [bracketOpen, bracketClose] = bracket ? ['[',']'] : ['',''];
+        bracketVals = this.bracketLogic(arguments[0]),
+        [bracketOpen, bracketClose, bracketLeftOpen, bracketLeftClose,
+          bracketRightOpen, bracketRightClose] = bracketVals,
+        evenOddBracketsAllowed = bracketVals.every(v => v == ''),
+        open = `${bracketOpen}${bracketLeftOpen}`,
+        close = `${bracketRightClose}${bracketClose}`;
     while (true) {
-      let openLabel = `${bracketOpen}${unitLabel}`,
-          num1 = numberer.next().value,
-          side1 = frontBackLabeler.next().value;
+      let [num1, c] = numberer.next().value,
+          side1 = frontBackLabeler.next().value,
+          page1 = `${num1}${side1}`,
+          [eoBracketL, eoBracketR] = ['',''];
+      if (evenOddBracketsAllowed) {
+        [eoBracketL, eoBracketR] = this.evenOddBracket(c, bracketEvens, bracketOdds);
+      }
       if (!twoUp) {
-          yield `${openLabel}${num1}${side1}${bracketClose}`
+        yield `${open}${eoBracketL}${unitLabel}${page1}${eoBracketR}${close}`
       } else {
-        let num2 = numberer.next().value,
+        let [num2, c] = numberer.next().value,
             side2 = frontBackLabeler.next().value,
-            sep = twoUpSeparator;
+            sep = `${bracketLeftClose}${twoUpSeparator}${bracketRightOpen}`,
+            page2 = `${num2}${side2}`;
         if (twoUpDir=='rtl') {
-            yield `${openLabel}${num2}${side2}${sep}${num1}${side1}${bracketClose}`;
+          yield `${open}${unitLabel}${page2}${sep}${page1}${close}`;
         } else {
-            yield `${openLabel}${num1}${side1}${sep}${num2}${side2}${bracketClose}`;
+          yield `${open}${unitLabel}${page1}${sep}${page2}${close}`;
         }
       }
     }
+  },
+
+  evenOddBracket: function(numInt, doEvens, doOdds) {
+    if ((doOdds && numInt % 2 == 1) || (doEvens && numInt % 2 == 0)) {
+      return ['[', ']']
+    } else {
+      return ['', '']
+    }
+
   },
 
   /**
@@ -65,6 +111,9 @@ const labelGen = {
    *   yielded twice.
    * @param {string} [startWith=front] - If set to "back" and method=foliate,
    *   the first value only yielded once.
+   * @yields {[(string, number]} - A two member array, the first item being
+   *   the value for use in the label, and the second being that value
+   *   represented as an integer.
    */
   pageNumberGenerator: function*({
     start = 1,
@@ -89,9 +138,9 @@ const labelGen = {
       if (roman) {
         let val = this.romanize(counter);
         if (capital) val = val.toUpperCase()
-        yield val;
+        yield [val, counter];
       }
-      else yield counter;
+      else yield [String(counter), counter];
 
       if (method == 'foliate') {
         if (changeFolio) counter++;
@@ -117,6 +166,41 @@ const labelGen = {
     let labeler = cycle(labels);
     while (true)
       yield labeler.next().value;
+  },
+
+  /**
+   * Examine options to detemine what brackets to include. Only one of
+   * `bracket`, `twoUpBracketLeftOnly`, `twoUpBracketRightOnly` can be set.
+   * This function enforces that (interfaces should enforce it as well) and
+   * returns the  appropriate strings for use in templates. If more than one
+   * option is true, all brackets return will be empty strings (`''`).
+   * @param {boolean} [bracket=false] - If true add brackets ('[]') around the
+   *   entire label.
+   * @param {string} [twoUpBracketLeftOnly=false] - If twoUp and true, bracket
+   *   the value to the left of the separator only.
+   * @param {string} [twoUpBracketRightOnly=false] - If twoUp and true, bracket
+   *   the value to the right of the separator only.
+   */
+  bracketLogic: function({
+    bracket = false,
+    twoUpBracketLeftOnly = false,
+    twoUpBracketRightOnly = false
+  } = {}) {
+    var bracketOpen = '',
+        bracketClose = '',
+        bracketLeftOpen = '',
+        bracketLeftClose = '',
+        bracketRightOpen = '',
+        bracketRightClose = ''
+    if (bracket && !(twoUpBracketLeftOnly || twoUpBracketRightOnly)) {
+      [bracketOpen, bracketClose] = ['[',']']
+    } else if (twoUpBracketLeftOnly &&  !(bracket || twoUpBracketRightOnly)) {
+      [bracketLeftOpen, bracketLeftClose] = ['[',']']
+    } else if (twoUpBracketRightOnly &&  !(bracket || twoUpBracketLeftOnly)) {
+      [bracketRightOpen, bracketRightClose] = ['[',']']
+    }
+    return [bracketOpen, bracketClose, bracketLeftOpen, bracketLeftClose,
+      bracketRightOpen, bracketRightClose]
   },
 
   /**
